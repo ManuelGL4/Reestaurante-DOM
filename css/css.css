@@ -122,3 +122,10 @@ footer hr {
     grid-column: 1;
     grid-row: 2;
 }
+
+#random-dish img {
+
+    width: 40%;
+    height: 100px;
+
+}

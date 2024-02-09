@@ -463,26 +463,18 @@ const RestaurantsManager = (function () {
         throw new Error('La categoría no está registrada.');
       }
 
-      const categoryDishes = Array.from(category.getDishes(), function (categoryDish) {
-        return categoryDish.dish;
-      });
-
+      const categoryDishes = Array.isArray(category.dishes) ? category.dishes : [category.dishes];
 
       return {
-        [Symbol.iterator]: function () {
-          let index = 0;
-          return {
-            next: function () {
-              if (index < categoryDishes.length) {
-                return { value: categoryDishes[index++], done: false };
-              } else {
-                return { done: true };
-              }
-            }
-          };
+        [Symbol.iterator]: function* () {
+          for (const dish of categoryDishes) {
+            yield dish;
+          }
         }
       };
     }
+
+
 
     //Metodo getDishesWithAllergen
     getDishesWithAllergen(allergen) {

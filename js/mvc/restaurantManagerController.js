@@ -27,35 +27,22 @@ class RestaurantManagerController {
         const dish6 = new Dish('Tacos', 'Descripción tacos', 'Ingredientes de tacos', 'tacos.jpg');
         const dish7 = new Dish('Filete de Salmón', 'Descripción filete de salmón', 'Ingredientes de filete de salmón', 'salmón.jpg');
         const dish8 = new Dish('Paella', 'Descripción paella', 'Ingredientes de paella', 'paella.jpg');
-        const dish9 = new Dish('Ceviche', 'Descripción ceviche', 'Ingredientes de ceviche', 'ceviche.jpg');
+        const dish9 = new Dish('Filete', 'Descripción filete', 'Ingredientes de filete', 'filete.jpg');
         const dish10 = new Dish('Curry de Pollo', 'Descripción curry de pollo', 'Ingredientes de curry de pollo', 'curry.jpg');
         const dish11 = new Dish('Lasagna', 'Descripción lasagna', 'Ingredientes de lasagna', 'lasagna.jpg');
-        const dish12 = new Dish('Sopa de Tomate', 'Descripción sopa de tomate', 'Ingredientes de sopa de tomate', 'sopa.jpg');
-        manager.addDish(dish1, dish2, dish3, dish4, dish5, dish6, dish7, dish8, dish9, dish10, dish11, dish12);
+        const dish12 = new Dish('Sopa', 'Descripción sopa', 'Ingredientes de sopa', 'sopa.jpg');
 
         //3 CATEGORIAS
-        const category1 = new Category('Ensaladas', 'Variedad de ensaladas frescas');
-        const category2 = new Category('Platos Italianos', 'Deliciosos platos tradicionales italianos');
-        const category3 = new Category('Comida Asiática', 'Sabores auténticos de Asia');
-        manager.addCategory(category1, category2, category3);
+        const Ensaladas = new Category('Ensaladas', 'Variedad de ensaladas frescas');
+        const Italiano = new Category('Platos Italianos', 'Deliciosos platos tradicionales italianos');
+        const Asiatico = new Category('Comida Asiática', 'Sabores auténticos de Asia');
 
-        manager.assignCategoryToDish(category1, dish1);
-        manager.assignCategoryToDish(category2, dish2);
-        manager.assignCategoryToDish(category3, dish3);
-        //manager.assignCategoryToDish(category1, dish4);
-        for (const category of manager.getCategories()) {
-            console.log(category);
-        }
-        const iterator = manager.getDishesInCategory(category1)[Symbol.iterator]();
-        let iterationResult = iterator.next();
 
-        while (!iterationResult.done) {
-            const dish = iterationResult.value;
-            // Hacer algo con el plato (dish), por ejemplo, imprimir su nombre
-            console.log(dish.name); // Suponiendo que el objeto "dish" tiene una propiedad "name"
+        manager.assignCategoryToDish(Ensaladas, dish1);
+        manager.assignCategoryToDish(Italiano, dish2);
+        manager.assignCategoryToDish(Asiatico, dish3);
+        // //manager.assignCategoryToDish(category1, dish4);
 
-            iterationResult = iterator.next();
-        }
         /*
         manager.assignCategoryToDish(category1, dish2);
         manager.assignCategoryToDish(category1, dish3);
@@ -114,6 +101,7 @@ class RestaurantManagerController {
             const link = document.createElement('a');
             link.href = '#';
             link.textContent = category.getName();
+            link.addEventListener('click', () => this.handleCategoryClick(category));
             menuItem.appendChild(link);
             menu.appendChild(menuItem);
         });
@@ -121,20 +109,52 @@ class RestaurantManagerController {
         const menuContainer = document.getElementById('lista-container');
         menuContainer.appendChild(menu);
 
-        // Mostrar todas las categorías y 3 platos aleatorios en la zona central al cargar la página
+        //Mostrar categorias y platos aleatorios
         this.showAllCategories(categories);
         this.showRandomDishes(dishes);
+
+    }//Fin InitApp
+
+    handleCategoryClick(category) {
+        const manager = RestaurantsManager.getInstance();
+        const dishesInCategory = manager.getDishesInCategory(category);
+
+        this.clearCentralZone();
+        this.showDishesInCentralZone(dishesInCategory);
     }
+
+    clearCentralZone() {
+        const centralZone = document.getElementById('central-zone');
+        centralZone.innerHTML = '';
+    }
+
+    showDishesInCentralZone(dishesInCategory) {
+        const centralZone = document.getElementById('central-zone');
+        for (const dish of dishesInCategory) {
+            console.log(dish);
+            const dishElement = document.createElement('div');
+            dishElement.textContent = dish.name;
+            centralZone.appendChild(dishElement);
+        }
+    }
+
+
+
     showRandomDishes(dishes) {
         const centralZone = document.getElementById('random-dish');
         for (let i = 0; i < 3; i++) {
             const randomIndex = Math.floor(Math.random() * dishes.length);
             console.log("numero random para el elemto " + i + " " + randomIndex);
-            const dishElement = document.createElement('div');
-            dishElement.textContent = dishes[randomIndex].getName();
+            const dishElement = document.createElement('img');
+            console.log(dishes[randomIndex].name);
+            const src = "../img/" + dishes[randomIndex].getImage();
+            dishElement.src = src;
+            dishElement.alt = dishes[randomIndex].getName();
+            console.log(dishes[randomIndex].getName());
             centralZone.appendChild(dishElement);
         }
     }
+
 
     showAllCategories(categories) {
         const centralZone = document.getElementById('central-zone');
