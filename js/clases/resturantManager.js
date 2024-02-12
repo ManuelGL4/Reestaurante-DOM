@@ -169,17 +169,22 @@ const RestaurantsManager = (function () {
         if (!newDish || !(newDish instanceof Dish)) {
           throw new Error('El plato debe ser un objeto Dish y no puede ser nulo.');
         }
-
+    
         const dishName = newDish.getName();
-        if (this.#dishes.some(function (dish) { return dish.getName() === dishName; })) {
+        if (this.#dishes.some(function (dish) { return dish.dish.name === dishName; })) {
           throw new Error('El plato ya existe en el sistema.');
         }
-
-        this.#dishes.push(newDish);
+    
+        this.#dishes.push({
+          dish: newDish,
+          categories: [],
+          allergens: []
+        });
       }, this);
-
+    
       return this;
     }
+    
 
     //Metodo removeDish
     removeDish(...dishesToRemove) {
@@ -248,38 +253,34 @@ const RestaurantsManager = (function () {
       return this;
     }
 
-    //Metodo assignCategoryToDish
-    assignCategoryToDish(category, dish) {
-      // Verificar si category es nulo o no es una instancia de Category
-      if (!category || !(category instanceof Category)) {
-        throw new Error('La categoría debe ser un objeto Category y no puede ser nula.');
+//Metodo assignCategoryToDish
+assignCategoryToDish(category, ...dishs) {
+  if (!category || !(category instanceof Category)) {
+    throw new Error('La categoría debe ser un objeto Category y no puede ser nula.');
+  }
+
+  for (const dish of dishs) {
+
+  // Verificar si dish es nulo o no es una instancia de Dish
+  if (!dish || !(dish instanceof Dish)) {
+    throw new Error('El plato debe ser un objeto Dish y no puede ser nulo.');
+  }
+    let posi = this.#dishes.findIndex(d => d.dish === dish);
+      if (posi === -1) {
+          this.addDish(dish);
+          posi = this.#dishes.findIndex(d => d.dish.name === dish.name);
       }
-
-      // Verificar si dish es nulo o no es una instancia de Dish
-      if (!dish || !(dish instanceof Dish)) {
-        throw new Error('El plato debe ser un objeto Dish y no puede ser nulo.');
+      let cat = this.#categories.indexOf(category);
+      if (cat === -1) {
+          this.addCategory(category);
+          cat = this.#categories.indexOf(category);
       }
-
-      // Añadir la categoria
-      if (!this.#categories.includes(category)) {
-        this.#categories.push(category);
-      }
-
-      //<Añadir el plato
-      if (!this.#dishes.includes(dish)) {
-        this.#dishes.push(dish);
-      }
-
-      // Crear una relación entre la categoría y el plato
-      const categoryDish = {
-        dish: dish
-      };
-
-      // Agregar la relación al array de dishes en la categoría
-      category.setDishes(...category.getDishes(), categoryDish);
-
-      return this;
-    }
+      // recoge la categoria del array para añadir la ya existente
+      cat = this.#categories[cat];
+      this.#dishes[posi].categories.push(cat);
+  }
+  return this;
+}
 
     //Metodo deassignCategoryToDish
     deassignCategoryToDish(category, dish) {
@@ -307,37 +308,24 @@ const RestaurantsManager = (function () {
     }
 
     //Metodo assignAllergenToDish
-    assignAllergenToDish(allergen, dish) {
-      // Verificar si allergen es nulo o no es una instancia de Allergen
-      if (!allergen || !(allergen instanceof Allergen)) {
-        throw new Error('El alérgeno debe ser un objeto Allergen y no puede ser nulo.');
+    assignAllergenToDish(allergen, ...dishs) {
+      for (const dish of dishs) {
+          let posi = this.#dishes.findIndex(d => d.dish === dish);
+          if (posi === -1) {
+              this.addDish(dish);
+              posi = this.#dishes.findIndex(d => d.dish === dish);
+          }
+          let ale = this.#allergens.indexOf(allergen);
+          if (ale === -1) {
+              this.addAllergen(allergen);
+              ale = this.#allergens.indexOf(allergen);
+          }
+          ale = this.#allergens[ale];
+          this.#dishes[posi].allergens.push(ale);
       }
-
-      // Verificar si dish es nulo o no es una instancia de Dish
-      if (!dish || !(dish instanceof Dish)) {
-        throw new Error('El plato debe ser un objeto Dish y no puede ser nulo.');
-      }
-
-      // Si el alérgeno no está,añadirlo
-      if (!this.#allergens.includes(allergen)) {
-        this.#allergens.push(allergen);
-      }
-
-      // Si el plato no está registrado,añadirlo
-      if (!this.#dishes.includes(dish)) {
-        this.#dishes.push(dish);
-      }
-
-      // Crear una relación entre el alérgeno y el plato
-      const allergenDish = {
-        dish: dish
-      };
-
-      // Agregar la relación al array de platos en el alérgeno
-      allergen.setDishes(...allergen.getDishes(), allergenDish);
-
       return this;
-    }
+  }
+
 
     //Metodo deassignAllergenToDish
     deassignAllergenToDish(allergen, dish) {
@@ -462,17 +450,22 @@ const RestaurantsManager = (function () {
       if (!category || !(category instanceof Category) || !this.#categories.includes(category)) {
         throw new Error('La categoría no está registrada.');
       }
-
-      const categoryDishes = Array.isArray(category.dishes) ? category.dishes : [category.dishes];
+      if (this.#categories.findIndex(c => c.name === category.name) === -1) throw new CategoryNotRegisterdException();
+      let platos = [];
+      this.#dishes.forEach(dish => {
+          if (dish.categories.findIndex(cat => cat.name === category.name) !== -1) {
+              platos.push(dish);
+          }
+      });
 
       return {
-        [Symbol.iterator]: function* () {
-          for (const dish of categoryDishes) {
-            yield dish;
-          }
-        }
+          *[Symbol.iterator]() {
+              for (const dishCat of platos) {
+                  yield dishCat;
+              }
+          },
       };
-    }
+  }
 
 
 

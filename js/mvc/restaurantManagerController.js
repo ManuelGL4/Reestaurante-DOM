@@ -31,19 +31,13 @@ class RestaurantManagerController {
         const dish10 = new Dish('Curry de Pollo', 'Descripción curry de pollo', 'Ingredientes de curry de pollo', 'curry.jpg');
         const dish11 = new Dish('Lasagna', 'Descripción lasagna', 'Ingredientes de lasagna', 'lasagna.jpg');
         const dish12 = new Dish('Sopa', 'Descripción sopa', 'Ingredientes de sopa', 'sopa.jpg');
-        manager.addDish(dish4,dish5,dish6,dish7,dish8,dish9,dish10,dish11,dish12);
+        //manager.addDish(dish4,dish5,dish6,dish7,dish8,dish9,dish10,dish11,dish12);
         //3 CATEGORIAS
-        const Ensaladas = new Category('Ensaladas', 'Variedad de ensaladas frescas');
-        const Italiano = new Category('Platos Italianos', 'Deliciosos platos tradicionales italianos');
-        const Asiatico = new Category('Comida Asiática', 'Sabores auténticos de Asia');
+        const category1 = new Category('Platos Rapidos', 'Variedad de ensaladas frescas');
+        const category2 = new Category('Platos con sabor a Mar', 'Deliciosos platos tradicionales italianos');
+        const category3 = new Category('Platos de carne', 'Sabores auténticos de Asia');
 
-
-        manager.assignCategoryToDish(Ensaladas, dish1);
-        manager.assignCategoryToDish(Italiano, dish2);
-        manager.assignCategoryToDish(Asiatico, dish3);
-        // //manager.assignCategoryToDish(category1, dish4);
-
-        /*
+        manager.assignCategoryToDish(category1, dish1);
         manager.assignCategoryToDish(category1, dish2);
         manager.assignCategoryToDish(category1, dish3);
         manager.assignCategoryToDish(category1, dish4);
@@ -55,18 +49,25 @@ class RestaurantManagerController {
         manager.assignCategoryToDish(category3, dish10);
         manager.assignCategoryToDish(category3, dish11);
         manager.assignCategoryToDish(category3, dish12);
-*/
+
 
         //4 ALERGENOS
         const allergen1 = new Allergen('Gluten', 'Contiene gluten');
         const allergen2 = new Allergen('Lactosa', 'Contiene lactosa');
         const allergen3 = new Allergen('Nueces', 'Puede contener trazas de nueces');
         const allergen4 = new Allergen('Mariscos', 'Contiene mariscos');
-        /*
-                for (const category of manager.getAllergens()) {
-                    console.log(category);
-                }
-        */
+        manager.assignAllergenToDish(allergen1, dish1);
+        manager.assignAllergenToDish(allergen2, dish2);
+        manager.assignAllergenToDish(allergen1, dish3);
+        manager.assignAllergenToDish(allergen1, dish4);
+        manager.assignAllergenToDish(allergen1, dish5);
+        manager.assignAllergenToDish(allergen3, dish7);
+        manager.assignAllergenToDish(allergen1, dish6);
+        manager.assignAllergenToDish(allergen3, dish8);
+        manager.assignAllergenToDish(allergen1, dish9);
+        manager.assignAllergenToDish(allergen1, dish10);
+
+
         //3 MENUS
         const menu1 = new Menu('Menú Degustación', 'platos destacados.');
         const menu2 = new Menu('Menú Infantil', 'para los más pequeños.');
@@ -87,6 +88,7 @@ class RestaurantManagerController {
         for (const dish of manager.getDishes()) {
             dishes.push(dish);
         }
+
         console.log(dishes);
 
         console.log(categories);
@@ -130,13 +132,58 @@ class RestaurantManagerController {
 
     showDishesInCentralZone(dishesInCategory) {
         const centralZone = document.getElementById('central-zone');
+
+        // Iterar sobre los platos usando el iterador
         for (const dish of dishesInCategory) {
-            console.log(dish);
             const dishElement = document.createElement('div');
-            dishElement.textContent = dish.name;
+            const dishImage = document.createElement('img');
+            const imagePath = "../img/" + dish.dish.image;
+            dishImage.src = imagePath;
+            dishImage.alt = dish.dish.getName();
+            dishElement.appendChild(dishImage);
+            dishElement.textContent = dish.dish.name;
+
+            // Agregar evento de clic para mostrar los detalles del plato
+            dishElement.addEventListener('click', () => this.showDishDetails(dish));
+
             centralZone.appendChild(dishElement);
         }
     }
+
+    showDishDetails(dish) {
+        // Crear una caja para mostrar los detalles del plato
+        console.log(dish);
+        const detailsBox = document.createElement('div');
+        detailsBox.classList.add('dish-details-box');
+
+        const nameElement = document.createElement('h1');
+        nameElement.textContent = dish.dish.name;
+
+        const descriptionElement = document.createElement('p');
+        descriptionElement.textContent = 'Descripción: ' + dish.dish.description;
+
+        const ingredientsElement = document.createElement('p');
+        ingredientsElement.textContent = 'Ingredientes: ' + dish.dish.ingredients;
+        const alergenElemt = document.createElement('p');
+        ingredientsElement.textContent = 'Alergenos: ' + dish.dish.allergens;
+
+        const dishImage = document.createElement('img');
+        const imagePath = "../img/" + dish.dish.image;
+        dishImage.src = imagePath;
+        dishImage.alt = dish.dish.getName();
+
+        // Agregar los elementos a la caja
+        detailsBox.appendChild(nameElement);
+        detailsBox.appendChild(descriptionElement);
+        detailsBox.appendChild(ingredientsElement);
+        detailsBox.appendChild(dishImage);
+
+        const centralZone = document.getElementById('caja-plato');
+        centralZone.innerHTML = '';
+        centralZone.appendChild(detailsBox);
+    }
+
+
 
 
 
@@ -144,16 +191,17 @@ class RestaurantManagerController {
         const centralZone = document.getElementById('random-dish');
         for (let i = 0; i < 3; i++) {
             const randomIndex = Math.floor(Math.random() * dishes.length);
-            console.log("numero random para el elemto " + i + " " + randomIndex);
+            console.log(dishes[randomIndex]);
+            console.log("numero random para el elemento " + i + ": " + randomIndex);
+
             const dishElement = document.createElement('img');
-            console.log(dishes[randomIndex].name);
-            const src = "../img/" + dishes[randomIndex].getImage();
-            dishElement.src = src;
-            dishElement.alt = dishes[randomIndex].getName();
-            console.log(dishes[randomIndex].getName());
+            const imagePath = "../img/" + dishes[randomIndex].dish.image;
+            dishElement.src = imagePath;
+            dishElement.alt = dishes[randomIndex].dish.getName();
             centralZone.appendChild(dishElement);
         }
     }
+
 
 
     showAllCategories(categories) {
