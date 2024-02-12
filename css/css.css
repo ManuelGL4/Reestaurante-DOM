@@ -136,6 +136,7 @@ footer hr {
 }
 
 .dish-details-box {
+    margin-top: 10%;
     border: 3px solid #cc8d10;
     width: 800px;
     margin: 50px auto 0;
@@ -150,7 +151,11 @@ footer hr {
 }
 
 .dish-details-box img {
+    margin-left: 30px;
     grid-row: 2;
-    width: 100%;
+    width: 80%;
     height: auto;
+}
+.dish-details-box p {
+    grid-column: 2 / span 3;
 }

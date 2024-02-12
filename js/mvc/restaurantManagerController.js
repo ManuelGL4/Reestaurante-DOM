@@ -164,8 +164,13 @@ class RestaurantManagerController {
 
         const ingredientsElement = document.createElement('p');
         ingredientsElement.textContent = 'Ingredientes: ' + dish.dish.ingredients;
-        const alergenElemt = document.createElement('p');
-        ingredientsElement.textContent = 'Alergenos: ' + dish.dish.allergens;
+        const allergensElement = document.createElement('p');
+        let allergensText = 'Alergenos: ';
+        dish.allergens.forEach(allergen => {
+            allergensText += allergen.getName() + ', ';
+        });
+        allergensText = allergensText.slice(0, -2); //Eliminar coma y espacio
+        allergensElement.textContent = allergensText;
 
         const dishImage = document.createElement('img');
         const imagePath = "../img/" + dish.dish.image;
@@ -177,6 +182,7 @@ class RestaurantManagerController {
         detailsBox.appendChild(descriptionElement);
         detailsBox.appendChild(ingredientsElement);
         detailsBox.appendChild(dishImage);
+        detailsBox.appendChild(allergensElement);
 
         const centralZone = document.getElementById('caja-plato');
         centralZone.innerHTML = '';
