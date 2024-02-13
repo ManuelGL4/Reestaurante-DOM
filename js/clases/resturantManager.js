@@ -468,32 +468,26 @@ assignCategoryToDish(category, ...dishs) {
   }
 
 
-
     //Metodo getDishesWithAllergen
     getDishesWithAllergen(allergen) {
       if (!allergen || !(allergen instanceof Allergen) || !this.#allergens.includes(allergen)) {
         throw new Error('El alérgeno no está registrado.');
       }
-
-      const allergenDishes = this.#dishes.filter(function (dish) {
-        return dish.getAllergens().includes(allergen);
+      let dsh = [];
+      this.#dishes.forEach(dish => {
+        if (dish.allergens.findIndex(al => al.name === allergen.name) !== -1) {
+          dsh.push(dish);
+        }
       });
 
       return {
-        [Symbol.iterator]: function () {
-          let index = 0;
-          return {
-            next: function () {
-              if (index < allergenDishes.length) {
-                return { value: allergenDishes[index++], done: false };
-              } else {
-                return { done: true };
+          *[Symbol.iterator]() {
+              for (const dishCat of dsh) {
+                  yield dishCat;
               }
-            }
-          };
-        }
+          }
       };
-    }
+  }
 
     //Metodo findDishes
     findDishes(callback, sortFunction) {

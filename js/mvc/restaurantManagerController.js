@@ -60,13 +60,15 @@ class RestaurantManagerController {
         manager.assignAllergenToDish(allergen2, dish2);
         manager.assignAllergenToDish(allergen1, dish3);
         manager.assignAllergenToDish(allergen1, dish4);
-        manager.assignAllergenToDish(allergen1, dish5);
+        manager.assignAllergenToDish(allergen2, dish5);
         manager.assignAllergenToDish(allergen3, dish7);
-        manager.assignAllergenToDish(allergen1, dish6);
+        manager.assignAllergenToDish(allergen2, dish6);
         manager.assignAllergenToDish(allergen3, dish8);
         manager.assignAllergenToDish(allergen1, dish9);
         manager.assignAllergenToDish(allergen1, dish10);
-
+        manager.assignAllergenToDish(allergen4, dish11);
+        manager.assignAllergenToDish(allergen4, dish12);
+        manager.assignAllergenToDish(allergen4, dish1);
 
         //3 MENUS
         const menu1 = new Menu('Menú Degustación', 'platos destacados.');
@@ -88,7 +90,12 @@ class RestaurantManagerController {
         for (const dish of manager.getDishes()) {
             dishes.push(dish);
         }
-
+        //Pasar los alergenos a array
+        let alergens = [];
+        for (const dish of manager.getAllergens()) {
+            alergens.push(dish);
+        }
+        console.log(alergens);
         console.log(dishes);
 
         console.log(categories);
@@ -108,6 +115,17 @@ class RestaurantManagerController {
             menu.appendChild(menuItem);
         });
 
+                // Crear y agregar enlaces para cada alergeno al menú
+                alergens.forEach(alergen => {
+                    const menuItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = '#';
+                    link.textContent = alergen.getName();
+                    link.addEventListener('click', () => this.handleAllergenClick(alergen));
+                    menuItem.appendChild(link);
+                    menu.appendChild(menuItem);
+                });
+
         const menuContainer = document.getElementById('lista-container');
         menuContainer.appendChild(menu);
 
@@ -125,6 +143,15 @@ class RestaurantManagerController {
         this.showDishesInCentralZone(dishesInCategory);
     }
 
+    handleAllergenClick(allergen){
+        const manager = RestaurantsManager.getInstance();
+        const dishesWithAllergen = manager.getDishesWithAllergen(allergen);
+    
+        this.clearCentralZone();
+        this.showDishesInCentralZone(dishesWithAllergen);
+    }
+    
+
     clearCentralZone() {
         const centralZone = document.getElementById('central-zone');
         centralZone.innerHTML = '';
@@ -135,6 +162,26 @@ class RestaurantManagerController {
 
         // Iterar sobre los platos usando el iterador
         for (const dish of dishesInCategory) {
+            const dishElement = document.createElement('div');
+            const dishImage = document.createElement('img');
+            const imagePath = "../img/" + dish.dish.image;
+            dishImage.src = imagePath;
+            dishImage.alt = dish.dish.getName();
+            dishElement.appendChild(dishImage);
+            dishElement.textContent = dish.dish.name;
+
+            // Agregar evento de clic para mostrar los detalles del plato
+            dishElement.addEventListener('click', () => this.showDishDetails(dish));
+
+            centralZone.appendChild(dishElement);
+        }
+    }
+
+    showAllergenInCentralZone(dishesWithAllergen){
+        const centralZone = document.getElementById('central-zone');
+
+        // Iterar sobre los platos usando el iterador
+        for (const dish of dishesWithAllergen) {
             const dishElement = document.createElement('div');
             const dishImage = document.createElement('img');
             const imagePath = "../img/" + dish.dish.image;
