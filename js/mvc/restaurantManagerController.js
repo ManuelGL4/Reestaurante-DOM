@@ -79,6 +79,7 @@ class RestaurantManagerController {
         const restaurant1 = new Restaurant('Restaurante Italiano', 'Ofrecemos auténtica comida italiana en un ambiente acogedor.', new Coordinate(41.9028, 12.4964));
         const restaurant2 = new Restaurant('Restaurante Mexicano', 'Disfruta de la vibrante cocina mexicana con auténticos sabores y especias.', new Coordinate(23.6345, -102.5528));
         const restaurant3 = new Restaurant('Restaurante Asiático', 'Sumérgete en la exótica comida asiática con una amplia variedad de platos y sabores.', new Coordinate(35.6895, 139.6917));
+        manager.addRestaurant(restaurant1,restaurant2,restaurant3);
 
         //Pasar las categorias a array
         let categories = [];
@@ -95,6 +96,8 @@ class RestaurantManagerController {
         for (const dish of manager.getAllergens()) {
             alergens.push(dish);
         }
+
+
         console.log(alergens);
         console.log(dishes);
 
@@ -125,6 +128,33 @@ class RestaurantManagerController {
                     menuItem.appendChild(link);
                     menu.appendChild(menuItem);
                 });
+
+    let restaurants = [];
+    for (const dish of manager.getRestaurants()) {
+        restaurants.push(dish);
+    }
+    console.log(restaurants);
+
+    const selectRestaurant = document.createElement('select');
+
+    restaurants.forEach(restaurant => {
+        const option = document.createElement('option');
+        option.value = restaurant.getName();
+        option.textContent = restaurant.getName();
+        selectRestaurant.appendChild(option);
+    });
+
+    selectRestaurant.addEventListener('change', (event) => {
+        const selectedRestaurantName = event.target.value;
+        const selectedRestaurant = restaurants.find(restaurant => restaurant.getName() === selectedRestaurantName);
+        if (selectedRestaurant) {
+            this.showRestaurantInfo(selectedRestaurant);
+        }
+    });
+
+    // Agregar el menú desplegable al contenedor deseado en el HTML
+    const dropdownContainer = document.getElementById('dropdown-container');
+    dropdownContainer.appendChild(selectRestaurant);
 
         const menuContainer = document.getElementById('lista-container');
         menuContainer.appendChild(menu);
