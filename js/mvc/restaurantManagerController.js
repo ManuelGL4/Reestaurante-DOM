@@ -2,14 +2,15 @@ import {
     RestaurantsManager
 } from '../clases/resturantManager.js';
 import { Dish, Coordinate, Allergen, Restaurant, Menu, Category } from '../clases/clases.js';
+import RestaurantManagerView from './restaurantManagerView.js';
 
 const MODEL = Symbol('ShoppingCartModel');
 const VIEW = Symbol('ShoppingCartView');
 
 class RestaurantManagerController {
-    constructor(model, view) {
-        this[MODEL] = model;
-        this[VIEW] = view;
+    constructor() {
+        this[MODEL] = RestaurantsManager.getInstance();
+        this[VIEW] = new RestaurantManagerView;
         this.onLoad();
     }
     onLoad() {
@@ -148,7 +149,7 @@ class RestaurantManagerController {
         const selectedRestaurantName = event.target.value;
         const selectedRestaurant = restaurants.find(restaurant => restaurant.getName() === selectedRestaurantName);
         if (selectedRestaurant) {
-            this.showRestaurantInfo(selectedRestaurant);
+            this[VIEW].showRestaurantInfo(selectedRestaurant);
         }
     });
 
@@ -160,147 +161,30 @@ class RestaurantManagerController {
         menuContainer.appendChild(menu);
 
         //Mostrar categorias y platos aleatorios
-        this.showAllCategories(categories);
-        this.showRandomDishes(dishes);
+        this[VIEW].showAllCategories(categories);
+        this[VIEW].showRandomDishes(dishes);
 
     }//Fin InitApp
+
+   
 
     handleCategoryClick(category) {
         const manager = RestaurantsManager.getInstance();
         const dishesInCategory = manager.getDishesInCategory(category);
 
-        this.clearCentralZone();
-        this.showDishesInCentralZone(dishesInCategory);
+        this[VIEW].clearCentralZone();
+        this[VIEW].showDishesInCentralZone(dishesInCategory);
     }
 
     handleAllergenClick(allergen){
         const manager = RestaurantsManager.getInstance();
         const dishesWithAllergen = manager.getDishesWithAllergen(allergen);
     
-        this.clearCentralZone();
-        this.showDishesInCentralZone(dishesWithAllergen);
-    }
-    
-
-    clearCentralZone() {
-        const centralZone = document.getElementById('central-zone');
-        centralZone.innerHTML = '';
-    }
-
-    showDishesInCentralZone(dishesInCategory) {
-        const centralZone = document.getElementById('central-zone');
-
-        // Iterar sobre los platos usando el iterador
-        for (const dish of dishesInCategory) {
-            const dishElement = document.createElement('div');
-            const dishImage = document.createElement('img');
-            const imagePath = "../img/" + dish.dish.image;
-            dishImage.src = imagePath;
-            dishImage.alt = dish.dish.getName();
-            dishElement.appendChild(dishImage);
-            dishElement.textContent = dish.dish.name;
-
-            // Agregar evento de clic para mostrar los detalles del plato
-            dishElement.addEventListener('click', () => this.showDishDetails(dish));
-
-            centralZone.appendChild(dishElement);
-        }
-    }
-
-    showAllergenInCentralZone(dishesWithAllergen){
-        const centralZone = document.getElementById('central-zone');
-
-        // Iterar sobre los platos usando el iterador
-        for (const dish of dishesWithAllergen) {
-            const dishElement = document.createElement('div');
-            const dishImage = document.createElement('img');
-            const imagePath = "../img/" + dish.dish.image;
-            dishImage.src = imagePath;
-            dishImage.alt = dish.dish.getName();
-            dishElement.appendChild(dishImage);
-            dishElement.textContent = dish.dish.name;
-
-            // Agregar evento de clic para mostrar los detalles del plato
-            dishElement.addEventListener('click', () => this.showDishDetails(dish));
-
-            centralZone.appendChild(dishElement);
-        }
-    }
-
-    showDishDetails(dish) {
-        // Crear una caja para mostrar los detalles del plato
-        console.log(dish);
-        const detailsBox = document.createElement('div');
-        detailsBox.classList.add('dish-details-box');
-
-        const nameElement = document.createElement('h1');
-        nameElement.textContent = dish.dish.name;
-
-        const descriptionElement = document.createElement('p');
-        descriptionElement.textContent = 'Descripción: ' + dish.dish.description;
-
-        const ingredientsElement = document.createElement('p');
-        ingredientsElement.textContent = 'Ingredientes: ' + dish.dish.ingredients;
-        const allergensElement = document.createElement('p');
-        let allergensText = 'Alergenos: ';
-        dish.allergens.forEach(allergen => {
-            allergensText += allergen.getName() + ', ';
-        });
-        allergensText = allergensText.slice(0, -2); //Eliminar coma y espacio
-        allergensElement.textContent = allergensText;
-
-        const dishImage = document.createElement('img');
-        const imagePath = "../img/" + dish.dish.image;
-        dishImage.src = imagePath;
-        dishImage.alt = dish.dish.getName();
-
-        // Agregar los elementos a la caja
-        detailsBox.appendChild(nameElement);
-        detailsBox.appendChild(descriptionElement);
-        detailsBox.appendChild(ingredientsElement);
-        detailsBox.appendChild(dishImage);
-        detailsBox.appendChild(allergensElement);
-
-        const centralZone = document.getElementById('caja-plato');
-        centralZone.innerHTML = '';
-        centralZone.appendChild(detailsBox);
-    }
-
-
-
-
-
-    showRandomDishes(dishes) {
-        const centralZone = document.getElementById('random-dish');
-        for (let i = 0; i < 3; i++) {
-            const randomIndex = Math.floor(Math.random() * dishes.length);
-            console.log(dishes[randomIndex]);
-            console.log("numero random para el elemento " + i + ": " + randomIndex);
-
-            const dishElement = document.createElement('img');
-            const imagePath = "../img/" + dishes[randomIndex].dish.image;
-            dishElement.src = imagePath;
-            dishElement.alt = dishes[randomIndex].dish.getName();
-            centralZone.appendChild(dishElement);
-        }
-    }
-
-
-
-    showAllCategories(categories) {
-        const centralZone = document.getElementById('central-zone');
-
-        categories.forEach(category => {
-            const categoryElement = document.createElement('div');
-            categoryElement.textContent = category.getName();
-            centralZone.appendChild(categoryElement);
-        });
+        this[VIEW].clearCentralZone();
+        this[VIEW].showDishesInCentralZone(dishesWithAllergen);
     }
 
 }
 
-function test() {
-    const rmc = new RestaurantManagerController();
-}
-test();
+
 export default RestaurantManagerController;
