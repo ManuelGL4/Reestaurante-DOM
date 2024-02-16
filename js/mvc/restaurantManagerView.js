@@ -135,6 +135,27 @@ class RestaurantManagerView {
         centralZone.appendChild(detailsBox);
     }
     
+    showDishesInMenu(menu) {
+        const centralZone = document.getElementById('central-zone');
+    
+        // Iterar sobre los platos del menú y mostrarlos
+        menu.dishes.forEach(dish => {
+            const dishElement = document.createElement('div');
+            const dishImage = document.createElement('img');
+            const imagePath = "../img/" + dish.image;
+            dishImage.src = imagePath;
+            dishImage.alt = dish.getName();
+            dishElement.appendChild(dishImage);
+            dishElement.textContent = dish.name;
+    
+            // Agregar evento de clic para mostrar los detalles del plato
+            dishElement.addEventListener('click', () => this.showDishDetails(dish));
+    
+            centralZone.appendChild(dishElement);
+        });
+    }
+    
+    
     clearCentralZone() {
         const centralZone = document.getElementById('central-zone');
         centralZone.innerHTML = '';

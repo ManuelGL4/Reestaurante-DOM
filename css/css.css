@@ -106,8 +106,7 @@ footer hr {
     margin-top: 50px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(1, 1fr);
-    height: 100px;
+    grid-template-rows: repeat(1, auto);
 }
 
 #central-zone {
@@ -123,16 +122,16 @@ footer hr {
 
 
 #random-dish {
-    margin-top: 100px;
+    margin-top: 10px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
 }
 
 #random-dish img {
-    align-items: center;
-    justify-content: center;
-    width: 40%;
-    height: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    height: 200px;
     border: 3px solid #cc8d10;
 }
 
@@ -143,7 +142,7 @@ footer hr {
     margin: 50px auto 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-
+    border-radius: 30px; 
     grid-template-rows: repeat(3, 90px);
 }
 
@@ -159,4 +158,74 @@ footer hr {
 }
 .dish-details-box p {
     grid-column: 2 / span 3;
+}
+h1{
+    text-align: center;
+}
+#caja-plato {
+    margin: 0 auto;
+    width: 1000px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.55));
+    padding: 20px; 
+    border: 2px solid #ccc; 
+    border-radius: 10px; 
+}
+#caja-plato h1 {
+    margin-left: -259px;
+    color: white;
+}
+#caja-plato p {
+    margin-left: 79px;
+    color: white;
+}
+
+.lista {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.lista li {
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+    margin: 0 auto;
+    max-width: 80%; 
+}
+
+.lista li:last-child {
+    border-bottom: none;
+}
+
+.lista li:hover {
+    background-color: #f0f0f0;
+}
+
+.lista a {
+    text-decoration: none;
+    background-color: transparent;
+    padding: 5px;
+    display: inline-block;
+}
+#central-zone {
+    padding: 10px 0;
+}
+
+#central-zone > div {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+#central-zone > div:last-child {
+    border-bottom: none;
+}
+
+#central-zone > div:hover {
+    background-color: #f0f0f0;
+}
+
+.separator {
+    height: 2px;
+    background-color: orange;
+    border: none;
+    margin: 10px 0;
 }

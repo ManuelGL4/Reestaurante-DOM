@@ -78,21 +78,25 @@ const RestaurantsManager = (function () {
 
     //Metodo addMenu
     addMenu(...newMenus) {
-      newMenus.forEach(function (newMenu) {
+      newMenus.forEach(newMenu => {
         if (!newMenu || !(newMenu instanceof Menu)) {
           throw new Error('El menú debe ser un objeto Menu y no puede ser nulo.');
         }
-
+    
         const menuName = newMenu.getName();
-        if (this.#menus.some(function (menu) { return menu.getName() === menuName; })) {
+        if (this.#menus.some(menuObj => menuObj.menu.getName() === menuName)) {
           throw new Error('El menú ya existe en el sistema.');
         }
-
-        this.#menus.push(newMenu);
-      }, this);
-
+    
+        this.#menus.push({
+          menu: newMenu,
+          dishes: []
+        });
+      });
+    
       return this;
     }
+    
 
     //Metodo removeMenu
     removeMenu(menu) {
@@ -350,43 +354,32 @@ assignCategoryToDish(category, ...dishs) {
     }
 
     //Metodo assignDishToMenu
-    assignDishToMenu(menu, dish) {
-      // Verificar si menu es nulo o no es una instancia de Menu
+    assignDishToMenu(menu, ...dishs) {
+    // Verificar si menu es nulo o no es una instancia de Menu
       if (!menu || !(menu instanceof Menu)) {
         throw new Error('El menú debe ser un objeto Menu y no puede ser nulo.');
       }
-
+      for (const dish of dishs) {
       // Verificar si dish es nulo o no es una instancia de Dish
       if (!dish || !(dish instanceof Dish)) {
         throw new Error('El plato debe ser un objeto Dish y no puede ser nulo.');
       }
+      let dispos = this.#dishes.findIndex(d => d.dish === dish);
+      if (dispos === -1) {
+        this.addDish(dish);
+          dispos = this.#dishes.findIndex(d => d.dish === dish);
+        }
+                  let actDish = this.#dishes[dispos];
 
-      // Si el menú no está registrado, añadirlo al sistema
-      if (!this.#menus.includes(menu)) {
-        this.#menus.push(menu);
-      }
-
-      // Si el plato no está registrado, añadirlo al sistema
-      if (!this.#dishes.includes(dish)) {
-        this.#dishes.push(dish);
-      }
-
-      // Obtener los platos del menú como un array
-      const menuDishesArray = [...menu.getDishes()];
-
-      // Crear una relación entre el menú y el plato
-      const menuDish = {
-        dish: dish
-      };
-
-      // Agregar la relación al array de platos en el menú
-      menuDishesArray.push(menuDish);
-
-      // Establecer los platos actualizados en el menú
-      menu.setDishes(menuDishesArray);
-
-      return this;
-    }
+                  let menpos = this.#menus.findIndex(m => m.menu.name === menu.name);
+                  if (menpos === -1) {
+                      this.addMenu(menu);
+                      menpos = this.#menus.findIndex(m => m.menu.name === menu.name);
+                  }
+                  this.#menus[menpos].dishes.push(actDish);
+              }
+              return this;
+          }
 
     //Metodo deassignDishToMenu
     deassignDishToMenu(menu, dish) {

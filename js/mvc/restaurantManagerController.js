@@ -75,7 +75,16 @@ class RestaurantManagerController {
         const menu1 = new Menu('Menú Degustación', 'platos destacados.');
         const menu2 = new Menu('Menú Infantil', 'para los más pequeños.');
         const menu3 = new Menu('Menú Vegetariano', 'Para aquellos que prefieren una opción sin carne.');
-
+        manager.assignDishToMenu(menu1,dish1);
+        manager.assignDishToMenu(menu1,dish2);
+        manager.assignDishToMenu(menu1,dish3);
+        manager.assignDishToMenu(menu2,dish4);
+        manager.assignDishToMenu(menu2,dish5);
+        manager.assignDishToMenu(menu2,dish6);
+        manager.assignDishToMenu(menu3,dish7);
+        manager.assignDishToMenu(menu3,dish8);
+        manager.assignDishToMenu(menu3,dish9);
+        
         //3 RESTAURANTES
         const restaurant1 = new Restaurant('Restaurante Italiano', 'Ofrecemos auténtica comida italiana en un ambiente acogedor.', new Coordinate(41.9028, 12.4964));
         const restaurant2 = new Restaurant('Restaurante Mexicano', 'Disfruta de la vibrante cocina mexicana con auténticos sabores y especias.', new Coordinate(23.6345, -102.5528));
@@ -98,7 +107,12 @@ class RestaurantManagerController {
             alergens.push(dish);
         }
 
+        let menus = [];
+        for (const dish of manager.getMenus()) {
+            menus.push(dish);
+        }
 
+        console.log(menus);
         console.log(alergens);
         console.log(dishes);
 
@@ -119,16 +133,16 @@ class RestaurantManagerController {
             menu.appendChild(menuItem);
         });
 
-                // Crear y agregar enlaces para cada alergeno al menú
-                alergens.forEach(alergen => {
-                    const menuItem = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = '#';
-                    link.textContent = alergen.getName();
-                    link.addEventListener('click', () => this.handleAllergenClick(alergen));
-                    menuItem.appendChild(link);
-                    menu.appendChild(menuItem);
-                });
+        // Crear y agregar enlaces para cada alergeno al menú
+        alergens.forEach(alergen => {
+            const menuItem = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = '#';
+            link.textContent = alergen.getName();
+            link.addEventListener('click', () => this.handleAllergenClick(alergen));
+            menuItem.appendChild(link);
+            menu.appendChild(menuItem);
+        });
 
     let restaurants = [];
     for (const dish of manager.getRestaurants()) {
@@ -143,6 +157,15 @@ class RestaurantManagerController {
         option.value = restaurant.getName();
         option.textContent = restaurant.getName();
         selectRestaurant.appendChild(option);
+    });
+    menus.forEach(menuAct => {
+        const menuItem = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = menuAct.menu.getName();
+        link.addEventListener('click', () => this.handleMenuClick(menuAct));
+        menuItem.appendChild(link);
+        menu.appendChild(menuItem);
     });
 
     selectRestaurant.addEventListener('change', (event) => {
@@ -164,6 +187,7 @@ class RestaurantManagerController {
         this[VIEW].showAllCategories(categories);
         this[VIEW].showRandomDishes(dishes);
 
+
     }//Fin InitApp
 
    
@@ -184,6 +208,13 @@ class RestaurantManagerController {
         this[VIEW].showDishesInCentralZone(dishesWithAllergen);
     }
 
+    handleMenuClick(menu) {
+        const manager = RestaurantsManager.getInstance();
+        const dishesInMenu = manager.getDishesInMenu(menu);
+    
+        this[VIEW].clearCentralZone();
+        this[VIEW].showDishesInMenu(dishesInMenu);
+    }
 }
 
 
